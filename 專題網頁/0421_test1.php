@@ -26,8 +26,7 @@
             flex-wrap: wrap;
             justify-content: center;
         }
-        #searchFormContainer input[type="text"],
-        #searchFormContainer input[list],
+        #searchFormContainer select,
         #searchFormContainer button {
             border-radius: 15px;
             padding: 8px 12px;
@@ -71,8 +70,7 @@
                 flex-direction: column;
                 align-items: stretch;
             }
-            #searchFormContainer input[type="text"],
-            #searchFormContainer input[list],
+            #searchFormContainer select,
             #searchFormContainer button {
                 width: 100%;
                 box-sizing: border-box;
@@ -87,8 +85,7 @@
             table {
                 font-size: 12px;
             }
-            #searchFormContainer input[type="text"],
-            #searchFormContainer input[list],
+            #searchFormContainer select,
             #searchFormContainer button {
                 padding: 6px 10px;
             }
@@ -105,11 +102,14 @@
     </div>
     <div id="searchFormContainer">
         <form id="searchForm">
-            <input list="options" id="searchTerm1" name="searchTerm1" placeholder="請輸入要搜尋的標號">
-            <datalist id="options">
-                <option value="IQVU03">
-            </datalist>
-            <input type="text" id="searchTerm2" name="searchTerm2" placeholder="請輸入要搜尋的圖號">
+            <select id="searchTerm1" name="searchTerm1">
+                <option value="" disabled selected>請選擇標號</option>
+                <option value="IQVU03">IQVU03</option>
+            </select>
+            <select id="searchTerm2" name="searchTerm2">
+                <option value="" disabled selected>請選擇圖號</option>
+                <!-- 圖號選項會由 PHP 生成 -->
+            </select>
             <button type="submit">搜尋</button>
         </form>
     </div>
@@ -119,6 +119,24 @@
     <div id="previewArea"></div>
 
     <script>
+        // 使用 fetch API 來獲取圖號選項並填充下拉選單
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('getNumbers.php')
+                .then(response => response.json())
+                .then(data => {
+                    const numberSelect = document.getElementById('searchTerm2');
+                    numberSelect.innerHTML = '<option value="" disabled selected>請選擇圖號</option>'; // 保留預設選項
+
+                    data.forEach(number => {
+                        const option = document.createElement('option');
+                        option.value = number;
+                        option.textContent = number;
+                        numberSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching number options:', error));
+        });
+
         document.getElementById('searchForm').addEventListener('submit', function(event) {
             event.preventDefault();
 
@@ -181,7 +199,7 @@
                 // URL的超連結
                 var urlCell = row.insertCell();
                 var urlLink = document.createElement('a');
-                urlLink.href = item.url;
+                urlLink.href = 'view_pdf.php?fileUrl=' + encodeURIComponent(item.url); // 使用 PHP 來顯示 PDF
                 urlLink.target = "_blank"; // 在新標籤頁打開
                 urlLink.textContent = '圖片'; 
                 urlCell.appendChild(urlLink);
