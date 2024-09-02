@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // 發送 POST 請求並獲取回應
     $response = file_get_contents($api_url, false, $context);
 
-    // 將回應直接回傳給前端
+    // 輸出搜尋結果
     echo $response;
 }
 ?>
