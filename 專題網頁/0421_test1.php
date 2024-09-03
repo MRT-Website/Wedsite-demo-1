@@ -26,7 +26,7 @@
             flex-wrap: wrap;
             justify-content: center;
         }
-        #searchFormContainer select,
+        #searchFormContainer input,
         #searchFormContainer button {
             border-radius: 15px;
             padding: 8px 12px;
@@ -64,13 +64,13 @@
             border: 1px solid #ccc;
         }
 
-        /* 响应式设计 */
+        /* 響應式設計 */
         @media (max-width: 768px) {
             #searchFormContainer {
                 flex-direction: column;
                 align-items: stretch;
             }
-            #searchFormContainer select,
+            #searchFormContainer input,
             #searchFormContainer button {
                 width: 100%;
                 box-sizing: border-box;
@@ -85,7 +85,7 @@
             table {
                 font-size: 12px;
             }
-            #searchFormContainer select,
+            #searchFormContainer input,
             #searchFormContainer button {
                 padding: 6px 10px;
             }
@@ -102,14 +102,16 @@
     </div>
     <div id="searchFormContainer">
         <form id="searchForm">
-            <select id="searchTerm1" name="searchTerm1">
-                <option value="" disabled selected>請選擇標號</option>
-                <option value="IQVU03">IQVU03</option>
-            </select>
-            <select id="searchTerm2" name="searchTerm2">
-                <option value="" disabled selected>請選擇圖號</option>
+            <input list="searchTerm1List" id="searchTerm1" name="searchTerm1" placeholder="請選擇或輸入標號">
+            <datalist id="searchTerm1List">
+                <option value="IQVU03"></option>
+            </datalist>
+
+            <input list="searchTerm2List" id="searchTerm2" name="searchTerm2" placeholder="請選擇或輸入圖號">
+            <datalist id="searchTerm2List">
                 <!-- 圖號選項會由 PHP 生成 -->
-            </select>
+            </datalist>
+            
             <button type="submit">搜尋</button>
         </form>
     </div>
@@ -124,14 +126,13 @@
             fetch('getNumbers.php')
                 .then(response => response.json())
                 .then(data => {
-                    const numberSelect = document.getElementById('searchTerm2');
-                    numberSelect.innerHTML = '<option value="" disabled selected>請選擇圖號</option>'; // 保留預設選項
+                    const numberDatalist = document.getElementById('searchTerm2List');
+                    numberDatalist.innerHTML = ''; // 清空原有選項
 
                     data.forEach(number => {
                         const option = document.createElement('option');
                         option.value = number;
-                        option.textContent = number;
-                        numberSelect.appendChild(option);
+                        numberDatalist.appendChild(option);
                     });
                 })
                 .catch(error => console.error('Error fetching number options:', error));
